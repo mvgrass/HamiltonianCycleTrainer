@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Гамильтонов цикл - Тренажер</title>
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/my_style.css">
+</head>
+<body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <script src="//d3js.org/d3.v3.min.js"></script>
+    <script src="https://unpkg.com/sweetalert2@7.1.1/dist/sweetalert2.all.js"></script>
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" href="#trainer" data-toggle="tab">Тренажер</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="#instruction" data-toggle="tab">Инструкция</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="#theory" data-toggle="tab">Теория</a>
+        </li>
+    </ul>
+
+
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="trainer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col-11">
+                        Кол-во вершин графа<br><input id="input-verts" type="number" style="width:50px"><button id="num-verts" class="btn btn-primary">Применить</button>
+                        <button id="randomGraph" class="btn btn-success" disabled>Сгенерировать граф</button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-1">
+                    </div>
+
+                    <div class="col-8">
+                        <div class="card">
+                            <div class="card-header" role="tab" id="headingOne">
+                                <h5 class="mb-0">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        Матрица смежности
+                                    </a>
+                                </h5>
+                            </div>
+                        </div>
+
+                        <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne">
+                            <div id = "adj-matrix" class="card-block">
+                                <!------Место для матрицы смежности------>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-1">
+                        <div class="custom-controls-stacked">
+                            <label class="custom-control custom-radio">
+                                <input id="radioTrainer" name="radio-stacked" type="radio" class="custom-control-input" checked>
+                                <span class="custom-control-indicator"></span>
+                                <span class="custom-control-description">Тренировка</span>
+                            </label>
+
+                            <label class="custom-control custom-radio">
+                                <input id="radioControl" name="radio-stacked" type="radio" class="custom-control-input">
+                                <span class="custom-control-indicator"></span>
+                                <span class="custom-control-description">Контроль</span>
+                            </label>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-1"></div>
+
+                    <div class="col-8">
+                        <div class="card">
+                            <div class="card-header" role="tab" id="headingTwo">
+                                <h5 class="mb-0">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                                        Список смежности
+                                    </a>
+                                </h5>
+                            </div>
+                        </div>
+
+                        <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
+                            <div id = "adj-list" class="card-block">
+                                <!------Место для списка смежности------>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-1"></div>
+
+                    <div class="col-md-11 col-lg-5">
+                        <div class="h4">Граф</div>
+                        <svg id="graphSVG" style="width: 380px; height:380px;border: 1px solid black;"></svg>
+                    </div>
+
+                    <div class="col-1 clearfix hidden-lg-up"></div>
+
+                    <div class="col-md-3 col-md-push-1 col-lg-3">
+                        <div class="h4">
+                            Выбор вершины
+                            <br>
+                            Текущая вершина: <span id="current-vert">-</span>
+                        </div>
+                        <div id="vertsDiv"></div>
+                        <button id="startButton" class="btn btn-success" disabled>Начать</button>
+                    </div>
+
+                    <div class="col-md-3 col-md-push-1 col-lg-1">
+                        <div class="h4">Стек: <span id="stack-size">-</span>/<span id="stack-max">-</span></div>
+                        <div id="stack"></div>
+                        <button id="stackButton" class="btn" disabled>Снять со стека</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="instruction">
+
+            <nav class="menu">
+                <ul>
+                    <li><a href="#modes">Режимы работы</a>
+                        <ul>
+                            <li><a href="#train-mode">Тренировка</a></li>
+                            <li><a href="#control-mode">Контроль</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#work-region">Рабочая зона</a>
+                        <ul>
+                            <li><a href="#graph-region">Граф</a></li>
+                            <li><a href="#vertex-region">Выбор вершины</a></li>
+                            <li><a href="#stack-region">Стек</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="container">
+
+                <div class="row" id="modes">
+                    <div class="col-12 h3">Режимы работы<hr></div>
+                    <div class="col-8">
+                        Пользователю на выбор доступно 2 режима работы:
+                        тренировка и контроль
+                    </div>
+                    <div class="col-4">
+                        <img src="img/img1.jpg">
+                    </div>
+                    <br>
+                </div>
+
+                <div class="row" id="train-mode">
+                    <div class="col-12 h5">Тренировка</div>
+                    <div class="col-8">
+                        Режим тренировки предназначен для ознакомления пользователя
+                        с интерфейсом тренажера, а также закреплением освоенных теоретических
+                        знаний на практике. В данном режиме пользователю доступны как генерация
+                        случайного графа, так и построение собственного графа: для этого пользователю
+                        предлагается задать или изменить уже заданное
+                        количество вершин графа и нажать кнопку "Применить". После
+                        проделанных действий пользователю будет предложенно два варианта ввода графа:<br> 1. Матрица смежности
+                        <br>2. Список смежности<br>Они являются связанными, то есть изменение в одной из таблиц влечет за собой
+                        изменение в другой. Заполнение возможно двумя способами:<br>1. Автоматически при нажатии
+                        на кнопку "Сгенерировать граф"<br>2. Вручную, пользуясь формами ввода<br><br>
+
+                        После того как граф готов можно переходить к началу прохождения тренировки, для этого
+                        пользователю просто нужно нажать на кнопку "Начать".<br><br>
+
+                        Так как алгоритм является переборным, то не рекомендуется проходить тренировку с более
+                        чем десятью вершинами, поскольку Вы можете как пройти его за пару минут так и застрять
+                        на приличное время, все будет зависеть от Вашего везения.<br><br>
+
+                        Отличительной особенностью режима тренировки также является тот факт, что при прохождении алгоритма
+                        вам лишь сделают предупреждения и не сбросят Ваш текущий результат.<br>
+                        <img src="img/img4.jpg">
+                    </div>
+
+                    <div class="col-4">
+                        <img src="img/img2.jpg">
+
+                        <img src="img/img3.jpg">
+                    </div>
+                </div>
+
+                <div class="row" id="control-mode">
+                    <div class="col-12 h5">Контроль</div>
+                    <div class="col-8">
+                        Режим контроля предназначен для пользователей, которые уже уверенно чувствуют
+                        себя в интерфейсе и понимают, как работет алгоритм.<br>
+                        В данном режиме пользователю не доступны функции редактирования графа. Пользователь
+                        сразу нажимает кнопку "Начать", программа генерирует для него граф с прописанным в ней количеством
+                        вершин, гаранитируется, что сгенерированный граф содержит гамильтонов цикл.<br><br>
+
+                        Отличительной особенностью является тот факт, что при любой ошибке Ваши результаты сбрасываются и
+                        Вам придется начать сначала на другом графе.
+                    </div>
+                    <div class="col-4"><img src="img/img5.jpg" width="350"></div>
+                </div>
+
+                <div class="row" id="work-region">
+                    <div class="col-12 h3">Рабочая зона<hr></div>
+                </div>
+
+                <div class="row" id="graph-region">
+                    <div class="col-12 h5">Граф</div>
+                    <div class="col-8">
+                        Данное поле является визуализацией графа, с которым работает пользвотель, и предназначено
+                        для увеличение понимания происходящего процесса во время работы алгоритма. Оно отображает текущее
+                        состояние решения: зелеными помечаются вершины, вошедшие в текущее частичное решение, красным -
+                        ребра. Тренажер сознательно построен таким образом, что решение строится не по графу, то есть
+                        нельзя взаимодействовать непосредственно с ним, также сознательно на графе не помечены номера вершин.
+                        От таких удобств пришлось отказаться по причине человеческого фактора. Мозгу человека очень удобно
+                        работать с визуализированной версией графа, поэтому невольно человек быстро найдет решение взглядом
+                        по графу, и весь тренажер сойдет на нет.
+                    </div>
+                    <div class="col-4"><img src="img/img6.png" width="300"></div>
+                </div>
+
+                <div class="row" id="vertex-region">
+                    <div class="col-12 h5">Выбор вершины</div>
+                    <div class="col-8">
+                        Одно из двух основных полей для прохождения алгоритма. В данном поле пользователю предоставляется
+                        выбор вершины, которую следует включить в частичное решение. Включать вершины нужно, руководствуясь правилами:
+                        <br>1. Вершина не находится в стеке (исключение замыкание гамильтонова цикла).
+                        <br>2. Вершина не помечена оранжевым цветом. Оранжевый цвет означает, что пользователь уже пробовал
+                        дополнить частичное решение этой вершиной и не нашел в таком продолжении ответа.
+                        <br>3. Если стек заполнен полностью и Вам доступна вершина, из которой Вы начинали построение,
+                        то Вы должны замкнуть гамильтонов циклю.
+                        <br>4. Если идти некуда, то придется возвращаться назад, снимая вершину со стека.
+                    </div>
+                    <div class="col-4">
+                        <img src="img/img7.jpg">
+                    </div>
+                </div>
+
+                <div class="row" id="stack-region">
+                    <div class="col-12 h5">Стек</div>
+                    <div class="col-8">
+                        Второе поле, являющееся основным. В данном поле представлено состояние стека, стек растет вниз, то
+                        есть вершины, попавшие в стек позже, отображаются в списке ниже. Кнопка "Снять со стека" удаляет
+                        последнюю вершину стека из списка. Стоит заметить, что основной целью тренажера является не построение
+                        гамильтонова цикла, а проверка понимания алгоритма, поэтому попытка снять вершину со стека раньше времени,
+                        когда у Вас еще есть возможность попытаться дополнить решение, даже если Вы видите, что оно Вас
+                        никуда не приведет, приравнивается к ошибке.
+                    </div>
+                    <div class="col-4">
+                        <img src="img/img8.jpg">
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="tab-pane fade" id="theory">
+
+            <nav class = "menu">
+                <ul>
+                    <li><a href="#basic-information">Основные сведения</a></li>
+                    <li><a href="#app-region">Область применения</a></li>
+                    <li><a href="#finding-algorithms">Алгоритм полного перебора с возвратом</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="container">
+
+                <div class="row" id="basic-information">
+                    <div class="col-12 h3">Основные сведения<hr></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-8">
+                        Название «гамильтонов цикл» произошло от задачи «Кругосветное путешествие»
+                        предложенной ирландским математиком Вильямом Гамильтоном в 1859 году. Нужно было, выйдя из
+                        исходной вершины графа, обойти все его вершины и вернуться в исходную точку.
+                        Граф представлял собой укладку додекаэдра, каждой из 20 вершин графа было приписано
+                        название крупного города мира. (Представлен на рисунке)
+                        <br><br>
+
+                        Гамильтоновым циклом в графе называют простой цикл, проходящий через все вершины.
+                        Также можно определить понятие гамильтонова пути — незамкнутого пути, также проходящего через все вершины.
+                        <br><br>
+                        Граф, содержащий гамильтонов путь называют полугамильтоновым, а содержащий гамильтонов цикл -
+                        гамильтоновым.
+                        <br><br>
+
+                    </div>
+                    <div class="col-4"><img src="img/300px-Hamiltonial.png"></div>
+                </div>
+
+                <div class="row" id="app-region">
+                    <div class="col-12 h3">Область применения<hr></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">Следует отметить область применения гамильтоновых графов.
+                        Наиболее известными задачами с использованием гамильтоновых графов ялвяются:
+                        <br>1. Задача о коммивояжере (англ. Travelling salesman problem, TSP) — задача, в которой
+                        коммивояжер должен посетить N городов, побывав в каждом из них ровно по одному разу и завершив
+                        путешествие в том городе, с которого он начал. В какой последовательности ему нужно обходить города,
+                        чтобы общая длина его пути была наименьшей?
+                        <br>2. Крииптографический протокол: доказательство с нулевым разглашением, позволяющий одной из
+                        взаимодействующих сторон («The verifier» — проверяющей) убедиться в достоверности какого-либо утверждения (обычно математического), не имея при этом никакой другой информации от второй стороны («The prover» — доказывающей)
+                        <br><br>
+                        Так как данные темы являются самостоятельными задачами, заинтересовавшимся читателям предлагается
+                        ознакомится с ними самостоятельно:
+                        <a target="_blank" href="https://ru.wikipedia.org/wiki/%D0%97%D0%B0%D0%B4%D0%B0%D1%87%D0%B0_%D0%BA%D0%BE%D0%BC%D0%BC%D0%B8%D0%B2%D0%BE%D1%8F%D0%B6%D1%91%D1%80%D0%B0">задача коммивояжера</a>,
+                        <a target="_blank" href="https://ru.wikipedia.org/wiki/%D0%94%D0%BE%D0%BA%D0%B0%D0%B7%D0%B0%D1%82%D0%B5%D0%BB%D1%8C%D1%81%D1%82%D0%B2%D0%BE_%D1%81_%D0%BD%D1%83%D0%BB%D0%B5%D0%B2%D1%8B%D0%BC_%D1%80%D0%B0%D0%B7%D0%B3%D0%BB%D0%B0%D1%88%D0%B5%D0%BD%D0%B8%D0%B5%D0%BC">о протоколе доказательства с нулевым разглашением</a>,
+                        <a href="http://www.cryptoprotocols.kz/index.php?view=examples&id=29" target="_blank">протокол доказательства с нулевым разглашением о знании гамильтонова цикла</a>
+                        <br><br>
+                    </div>
+                </div>
+
+                <div class="row" id="finding-algorithms">
+                    <div class="col-12 h3">Алгоритм полного перебора с возвратом<hr></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        Проблема существования гамильтонова пути принадлежит к классу так называемых NP-полных задач.
+                        Хотя формулировки эйлерова и гамильтонова графа звучат довольно похоже,
+                        в отличие от эйлеровых путей, неизвестно ни одного простого необходимого
+                        и достаточного условия для существования гамильтоновых путей. Неизвестен также алгоритм,
+                        который проверял бы существование гамильтонова пути в произвольном графе за полиномальное время.
+                        <br><br>
+                        Итак задумаемся, что значит отыскать гамильтонов путь в графе - это найти некоторую перестановку
+                        его вершин. Отсюда можно придумать простой алгоритм: перебираем все n! перестановок и проверяем
+                        каждую на соответсвие гамильтонову пути. Получаем сложность алгоритма O(n!*n), что выглядит
+                        не очень утешительно. Поэтому сегодня главным объектом нашего внимания будет алгоритм, позволяющий
+                        значительно сократить число шагов полного перебора.
+                        <br><br>
+                        Идея алгоритма основывается на том, что наше решение, последовательность вершин {x<sub>1</sub>..x<sub>n</sub>},
+                        будет выстраиваться последовательно, на каждом шаге мы будем пытаться дополнить наше частисное решение
+                        {x<sub>1</sub>..x<sub>i</sub>..} одной из смежных с x<sub>i</sub>р еще не участвующих в решении вершин,
+                        если на очередном шаге нам не удается дополнить решение, то мы возвращаемся на шаг назад. Алгоритм работает
+                        до тех пор, пока мы не найдем искомую последовательность, либо наша последовательность станет пустой, и мы установим,
+                        что решения не существует.<br>В принципе корректность данного алгоритма не требует большого анализа,
+                        так как алгоритм по-прежнему остается переборным, из перебора лишь исключаются заведомо неверные перестановки.
+                        <br><br>
+                        Рассмотрим алгоритм на следующем примере:<br>
+                        <table id = "Example">
+                            <tr>
+                                <td><img src="img/Hamiltonian_1.jpg" width="300px" height="300px"></td>
+                                <td>
+                                    Возможные варианты следующей вершины:<br>
+                                    1, 2, 3, 4, 5<br><br>
+                                    Текущее частичное<br>решение:<br>
+                                    { }
+                                </td>
+                                <td><img src="img/Hamiltonian_2.jpg" width="300px" height="300px"></td>
+                                <td>
+                                    Возможные варианты следующей вершины:<br>
+                                    2, 3, 4<br><br>
+                                    Текущее частичное<br>решение:<br>
+                                    { 1 }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><img src="img/Hamiltonian_3.jpg" width="300px" height="300px"></td>
+                                <td>
+                                    Возможные варианты следующей вершины:<br>
+                                    4, 5<br><br>
+                                    Текущее частичное<br>решение:<br>
+                                    { 1, 2 }
+                                </td>
+                                <td><img src="img/Hamiltonian_4.jpg" width="300px" height="300px"></td>
+                                <td>
+                                    Возможные варианты следующей вершины:<br>
+                                    3, 5<br><br>
+                                    Текущее частичное<br>решение:<br>
+                                    { 1, 2, 4 }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><img src="img/Hamiltonian_5.jpg" width="300px" height="300px"></td>
+                                <td>
+                                    Возможные варианты следующей вершины:<br>
+                                    5<br><br>
+                                    Текущее частичное<br>решение:<br>
+                                    { 1, 2, 4, 3 }
+                                </td>
+                                <td><img src="img/Hamiltonian_6.jpg" width="300px" height="300px"></td>
+                                <td>
+                                    Возможные варианты следующей вершины:<br>
+                                    <br><br>
+                                    Текущее частичное<br>решение:<br>
+                                    { 1, 2, 4, 3, 5 }<br><br>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><img src="img/Hamiltonian_5.jpg" width="300px" height="300px"></td>
+                                <td>
+                                    Возможные варианты следующей вершины:<br>
+                                    <br><br>
+                                    Текущее частичное<br>решение:<br>
+                                    { 1, 2, 4, 3 }
+                                </td>
+                                <td><img src="img/Hamiltonian_4.jpg" width="300px" height="300px"></td>
+                                <td>
+                                    Возможные варианты следующей вершины:<br>
+                                    5<br><br>
+                                    Текущее частичное<br>решение:<br>
+                                    { 1, 2, 4 }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><img src="img/Hamiltonian_7.jpg" width="300px" height="300px"></td>
+                                <td>
+                                    Возможные варианты следующей вершины:<br>
+                                    3<br><br>
+                                    Текущее частичное<br>решение:<br>
+                                    { 1, 2, 4, 5 }<br><br>
+                                </td>
+                                <td><img src="img/Hamiltonian_8.jpg" width="300px" height="300px"></td>
+                                <td>
+                                    Возможные варианты следующей вершины:<br>
+                                    1<br><br>
+                                    Текущее частичное<br>решение:<br>
+                                    { 1, 2, 4, 5, 3 }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><img src="img/Hamiltonian_9.jpg" width="300px" height="300px"></td>
+                                <td>
+                                    Гамильтонов цикл построен:<br>
+                                    1 - 2 - 4 - 5 - 3 - 1
+                                </td>
+                            </tr>
+                        </table>
+                        <br><br>
+                        Напишем псевдокод данного алгоритма:
+                        <br><br>
+                        <b>
+                            <pre>
+Функция Hamiltonian Начало
+
+    G(V, E) // заданный граф
+    used[] // массив отвечающий за состояние вершины (входит ли в частичное решение)
+    Stack // стек, хранящий вершины частного решения
+    Partial_used[V][] // Массив для запоминания ранее посещенных вершин частичного решения
+    Для каждой вершины v из V
+        used[v] = false
+
+    // Так как мы строим цикл нам не важно с какой вершины начать
+    cur_vertex = random(V)
+    Stack.push(cur_vertex)
+    used[cur_vertex] = true
+
+    Пока Stack не пуст выполнять:
+        Если |Stack| == |V| и cur_vertex смежна с начальной вершиной
+            //Гамильтонов цикл существует
+            Вернуть Stack // В нем и хранится последовательно наш цикл
+
+        cur_vertex = Stack.top()
+        Цикл по всем всем вершинам v смежным с cur_vertex:
+            Если used[v] == false && v not in Partial_used[cur_vertex]
+            // v не является участником частичного решения
+            // и еще не была попробована в качестве дополнения текущего частичного решения
+                used[v] = true
+                Partial_used[cur_vertex].push(v)
+                Stack.push(v)
+                Прервать цикл
+        Конец цикла
+
+        Если не подошла ни одна вершина смежная с cur_vertex
+            Stack.pop()
+            Partial[cur_vertex] = []
+    Конец пока
+
+    //Стек пуст, гамильтонова пути не существует
+    Вернуть Stack
+
+Конец Hamiltonian
+                            </pre>
+                        </b>
+
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    <script src="js/main.js?v=1.5"></script>
+    <script src = "js/graph.js?v=1.3"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $(".menu").on("click","a", function (event) {
+                event.preventDefault();
+                var id  = $(this).attr('href'),
+                    top = $(id).offset().top;
+                $('body,html').animate({scrollTop: top}, 1500);
+            });
+        });
+    </script>
+</body>
+</html>

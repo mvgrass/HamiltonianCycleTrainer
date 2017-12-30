@@ -1,0 +1,39 @@
+.btn{
+    margin: 10px;
+}
+
+.field{
+    width: 100%;
+    height: 500px;
+}
+
+.row{
+    margin: 10px;
+}
+
+.node {
+    fill: #000;
+    stroke: #fff;
+    stroke-width: 2px;
+}
+
+.link {
+    stroke: #6b6871;
+    stroke-width: 1px;
+}
+
+.chosenLink{
+    stroke: #f00;
+}
+
+.chosenCircle{
+    fill: #0f0;
+}
+
+#Example td{
+    max-width: 300px;
+}
+
+input{
+    margin: 5px;
+}
