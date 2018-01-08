@@ -603,3 +603,7 @@ function uncolorLink(number) {
     document.getElementById("link-"+stackDiv.lastChild.previousSibling.textContent+"-"+number)
         .classList.remove("chosenLink");
 }
+
+graphSVG.addEventListener("wheel", function (event) {
+    alert("something");
+})
